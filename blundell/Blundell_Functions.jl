@@ -23,3 +23,25 @@ clone0 = Clone([mutation0],N_0)
 # Initial Population
 Population0 = Population([clone0])
 push!(Population0.clones,clone0)
+
+
+
+
+
+function divide(clone_info,dt,B0,D0)
+
+    mu_vec=clone_info.Mutations
+    clone_size=clone_info.N
+    fitness_effects=[x.Fitness for x in mu_vec ]
+
+    F=sum(fitness_effects)
+    B=B0*(1+F)
+    pvar1=Poisson(clone_size*B*dt) 
+    number_of_births=rand(pvar1,1)
+    pvar2=Poisson(clone_size*D0*dt)
+    number_of_deaths=rand(pvar2,1)
+    clone_info.N=clone_info.N+number_of_births[1]+number_of_deaths[1]
+
+    return clone_info
+end 
+
