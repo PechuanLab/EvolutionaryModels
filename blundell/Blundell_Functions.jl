@@ -51,6 +51,30 @@ function divide(clone::Clone,dt::Float64,B0::Float64,D0::Float64)
 end 
 
 
+
+function mutation_fitness(DFE) 
+
+    total_prob=sum([i[2] for i in DFE])
+
+    normalized_DFE=[[i[1], i[2]/total_prob] for i in DFE]
+
+    uni_var=Uniform(0,1)
+    random_number=rand(uni_var,1)
+    cumulative=0
+
+    for set in normalized_DFE
+        cumulative=cumulative+set[2]
+
+        if random_number[1] < cumulative
+            fitness_effect=set[1]
+             break
+        end 
+    end
+
+    return fitness_effect
+end 
+
+
 function mutate(clone_info,dt,u,last_id,DFE)
     muta=clone_info.Mutations
     csize=clone_info.N
