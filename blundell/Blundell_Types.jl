@@ -1,6 +1,6 @@
 abstract type Lineages end
 
-mutable struct Mutation <: Lineages
+struct Mutation <: Lineages
     ID::Int
     Fitness::Float64
 end
