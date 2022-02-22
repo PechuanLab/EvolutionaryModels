@@ -45,3 +45,18 @@ function divide(clone_info,dt,B0,D0)
     return clone_info
 end 
 
+
+function mutate(clone_info,dt,u,last_id,DFE)
+    muta=clone_info.Mutations
+    csize=clone_info.N
+    pvar3=Poisson(csize*u*dt)
+    num_muta=rand(pvar3,1)
+
+    for i in range(start=1,stop=num_muta,step=1)
+        last_id=last_id+1
+        new_fit=mutation_fitness(DFE)
+        push!(clone_info.Mutations,Mutation(last_id,new_fit))
+    end
+    
+    return (clone_info.Mutations,last_id)
+end 
