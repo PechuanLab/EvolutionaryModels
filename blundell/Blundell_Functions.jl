@@ -51,27 +51,24 @@ function divide(clone::Clone,dt::Float64,B0::Float64,D0::Float64)
 end 
 
 
+"""
+Samples the fitness effect for a new mutation
+...
+# Arguments
+- `w::Array{Float64}`: Fitness Landscape, w = [sn,sb,sd],sn = 0 #neutral benefit
+    sb = 0.05 #beneficial , sd = 0  #deleterious
+- `θ::Array{Float64}`: Probability of sampling a mutation of a type Landscape, θ = [pn,pb,pd],pn = 1/3 #neutral benefit
+    pb = 2/3 #beneficial , pd = 0  #deleterious
+...
+"""
+function mutation_fitness(w::Array{Float64},θ::Array{Float64}) 
 
-function mutation_fitness(DFE) 
+    # Sample mutation fitnesss
+    FitnessLandscape = w
+    DFE = Categorical(θ) 
+    FitnessEffect = FitnessLandscape[rand(DFE,1)]
 
-    total_prob=sum([i[2] for i in DFE])
-
-    normalized_DFE=[[i[1], i[2]/total_prob] for i in DFE]
-
-    uni_var=Uniform(0,1)
-    random_number=rand(uni_var,1)
-    cumulative=0
-
-    for set in normalized_DFE
-        cumulative=cumulative+set[2]
-
-        if random_number[1] < cumulative
-            fitness_effect=set[1]
-             break
-        end 
-    end
-
-    return fitness_effect
+    return FitnessEffect
 end 
 
 
