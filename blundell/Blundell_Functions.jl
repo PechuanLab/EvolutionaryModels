@@ -1,15 +1,18 @@
+last_id = 1
+
 # First founder mutation
-mutation0 = Mutation(1,0.8)
-mutation1 = Mutation(2,0.4)
+mutation0 = Mutation(last_id,0.8)
+last_id = last_id + 1
+mutation1 = Mutation(last_id,0.4)
 
 # Initial Size
 N_0 = 1
 # Initial clone
 clone = Clone([mutation0,mutation1],N_0)
 # Initial Population
-Population0 = Population([clone0])
-push!(Population0.clones,clone0)
- divide(clone)
+population = Population([clone])
+push!(population.clones,clone)
+divide(clone)
 
 #=
 Packages
@@ -55,10 +58,11 @@ end
 Samples the fitness effect for a new mutation
 ...
 # Arguments
-- `w::Array{Float64}`: Fitness Landscape, w = [sn,sb,sd],sn = 0 #neutral benefit
-    sb = 0.05 #beneficial , sd = 0  #deleterious
-- `θ::Array{Float64}`: Probability of sampling a mutation of a type Landscape, θ = [pn,pb,pd],pn = 1/3 #neutral benefit
-    pb = 2/3 #beneficial , pd = 0  #deleterious
+- `w::Array{Float64}`: Fitness Landscape, 
+    #neutral benefit, benefidial, deleterious# 
+    sn = 0 ; sb = 0.05 ; sd = 0 ; w = [sn,sb,sd]
+- `θ::Array{Float64}`: Probability of sampling a mutation of a type Landscape, #neutral benefit, benefidial, deleterious# 
+    pn = 1/3 ; pb = 2/3 ; pd = 0 ; θ = [pn,pb,pd]
 ...
 """
 function mutation_fitness(w::Array{Float64},θ::Array{Float64}) 
@@ -66,23 +70,42 @@ function mutation_fitness(w::Array{Float64},θ::Array{Float64})
     # Sample mutation fitnesss
     FitnessLandscape = w
     DFE = Categorical(θ) 
-    FitnessEffect = FitnessLandscape[rand(DFE,1)]
+    FitnessEffect = FitnessLandscape[rand(DFE,1)][1]
 
     return FitnessEffect
 end 
 
-
-function mutate(clone_info,dt,u,last_id,DFE)
-    muta=clone_info.Mutations
-    csize=clone_info.N
-    pvar3=Poisson(csize*u*dt)
-    num_muta=rand(pvar3,1)
-
-    for i in range(start=1,stop=num_muta,step=1)
-        last_id=last_id+1
-        new_fit=mutation_fitness(DFE)
-        push!(clone_info.Mutations,Mutation(last_id,new_fit))
-    end
+"""
+Mutates a clonal lineage generating a new one
+...
+# Arguments
+- `clone::Clone`: Clonal lineage selected for division.
+- `dt::Float64=0.1`: Time interval step.
+- `μ::Float64=0.2`: Mutation rate
+- `last_id::Int`: Global bookeeping of mutation id
+- `w::Array{Float64}`: Fitness Landscape, w = [sn,sb,sd],sn = 0 #neutral benefit
+    sb = 0.05 #beneficial , sd = 0  #deleterious
+- `θ::Array{Float64}`: Probability of sampling a mutation of a type Landscape, θ = [pn,pb,pd],pn = 1/3 #neutral benefit
+    pb = 2/3 #beneficial , pd = 0  #deleterious
+...
+"""
+function mutate(clone::Clone,dt::Float64,μ::Float64,last_id::Int,w::Array{Float64},θ::Array{Float64})
     
-    return (clone_info.Mutations,last_id)
+    # Get the number of mutations that happen on dt interval
+    muta=clone.Mutations
+    pvar3=Poisson(clone.N*μ*dt)
+    num_muta=rand(pvar3,1)[1]
+
+    # Add each of these mutations and independet
+    new_clones = []
+    for i in 1:num_muta
+        last_id=last_id+1
+        new_fit=mutation_fitness(w,θ)
+        clone_mut = deepcopy(clone)
+        push!(clone_mut.Mutations,Mutation(last_id,new_fit))
+        clone_mut.N = 1
+        push!(new_clones, clone_mut)
+    end
+     
+    return new_clones,last_id
 end 
