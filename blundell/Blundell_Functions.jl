@@ -34,7 +34,7 @@ Divides a clonal lineage according to its fitness
 - `D0::Float64=0.2`: Initial Death rate.
 ...
 """
-function divide(clone::Clone,dt::Float64,B0::Float64,D0::Float64)
+function Divide(clone::Clone,dt::Float64,B0::Float64,D0::Float64)
 
     # Get attributes
     mu_vec=clone.Mutations
@@ -65,7 +65,7 @@ Samples the fitness effect for a new mutation
     pn = 1/3 ; pb = 2/3 ; pd = 0 ; θ = [pn,pb,pd]
 ...
 """
-function mutation_fitness(w::Array{Float64},θ::Array{Float64}) 
+function MutationFitness(w::Array{Float64},θ::Array{Float64}) 
 
     # Sample mutation fitnesss
     FitnessLandscape = w
@@ -89,7 +89,7 @@ Mutates a clonal lineage generating a new one
     pb = 2/3 #beneficial , pd = 0  #deleterious
 ...
 """
-function mutate(clone::Clone,dt::Float64,μ::Float64,last_id::Int,w::Array{Float64},θ::Array{Float64})
+function Mutate(clone::Clone,dt::Float64,μ::Float64,last_id::Int,w::Array{Float64},θ::Array{Float64})
     
     # Get the number of mutations that happen on dt interval
     muta=clone.Mutations
@@ -100,12 +100,30 @@ function mutate(clone::Clone,dt::Float64,μ::Float64,last_id::Int,w::Array{Float
     new_clones = []
     for i in 1:num_muta
         last_id=last_id+1
-        new_fit=mutation_fitness(w,θ)
+        new_fit=MutationFitness(w,θ)
         clone_mut = deepcopy(clone)
         push!(clone_mut.Mutations,Mutation(last_id,new_fit))
         clone_mut.N = 1
         push!(new_clones, clone_mut)
     end
-     
+    new_clones = convert(Array{Clone},new_clones)  
     return new_clones,last_id
 end 
+
+"""
+Returns the total population size
+...
+# Arguments
+- `population::Population`: Current population
+...
+"""
+function PopSize(population::Population)
+
+    pop_size = sum([x.N for x in population.clones])
+    
+    return(pop_size)
+
+end
+
+#for i in new_clones push!(population.clones,i) end
+
