@@ -150,133 +150,6 @@ Models sequencing and other sampling aspects
 - `population::populationulation: plug in populationulation 
 ...
 """
-function Sequence(population::Population,mean_depth::Float64)
-
-    # Unwrapp
-    clone_sizes = unwrapper_pop(population,"N")
-    mutations = unwrapper_pop(population,"Mutations")
-
-    # Set the seed dataframe
-    CloneDF0 = DataFrame()
-    clone_mutations = mutations[1]
-    CloneDF0[!,:ID] = unwrapper_mut(clone_mutations,"ID")
-    CloneDF0[!,:Fitness] = unwrapper_mut(clone_mutations,"Fitness")
-    CloneDF0[!,:N] = clone_sizes[1]*ones(length(clone_mutations))
-
-    # Grow the seed with mutatioons
-    for i = 2:length(mutations)
-        # To be added
-        CloneDFnext = DataFrame()
-        clone_mutations = mutations[i]
-        CloneDFnext[!,:ID] = unwrapper_mut(clone_mutations,"ID")
-        CloneDFnext[!,:Fitness] = unwrapper_mut(clone_mutations,"Fitness")
-        CloneDFnext[!,:N] = clone_sizes[i]*ones(length(clone_mutations))
-        # Add
-        id1 = CloneDF0[!,:ID]
-        id2 = CloneDFnext[!,:ID]
-        intersection = intersect(id1, id2)
-        inter = CloneDFnext[CloneDFnext[!,:ID] .∉ Ref(intersection),:]
-        notinter = CloneDFnext[CloneDFnext[!,:ID] .∈ Ref(intersection),:]
-        CloneDF0[CloneDF0[!,:ID] .∈ Ref(intersection),:N] = CloneDF0[CloneDF0[!,:ID] .∈ Ref(intersection),:N] + notinter[!,:N]
-        CloneDF0 =vcat(CloneDF0,inter)
-    end
-
-    # Let's add VAF (Variant Allele Frequency)
-    CloneDF0[!,:VAF] = CloneDF0[!,:N]*1/2*1/PopSize(population)
-    # Let's add the expected reads
-    depth = round(Int64,mean_depth*exp.(rand(Normal(0,0.3), 1))[1])
-    expected_reads = depth*CloneDF0[!,:VAF]
-    reads_array =rand.(Poisson.(expected_reads),1)
-    CloneDF0[!,:Reads] =  [reads_array[i][1] for i in 1:length(reads_array)]
-    CloneDF0[!,:measuredVAF] = CloneDF0[!,:Reads]/depth
-
-return CloneDF0
-
-end  
-
-
-function PoissonDynamics(t,dt,B0,D0,population,last_id)
-          # Time update
-            t = t+dt
-            pop_size = PopSize(population) 
-            new_clones0 = []
-            for i in 1:length(population.clones)
-                # Divide
-                Divide(population.clones[i],dt,B0,D0)
-                # Mutate
-                new_clones,last_id = Mutate(population.clones[i],dt,μ,last_id,w,θ)
-                if isempty(new_clones) 
-                    continue
-                end
-                for i = 1:length(new_clones)
-                    #push !
-                    push!(new_clones0,new_clones[i])
-                end
-            end
-            #Clean-up
-            if isempty(new_clones0)        
-            else
-                for i in 1:length(new_clones0)
-                push!(population.clones,new_clones0[i])
-                end
-            end
-            # Clean-up
-            clone_sizes = unwrapper_pop(population,"N")
-            deleteat!(population.clones, findall(x->x<1,clone_sizes))
-return population, last_id
-end
-
-#=
-Main Simulation for only one patient:
-
-# Popuation Dynamics Parameters
-    eq_population_size = 10^5 #number of stem cells (HSCs)
-    lifespan = 500 #measured in cell divisions (e.g. 100 = 100 cell divisions)
-    dt=0.1 # measured in units of the overall cell division rate
-    μ=3*10^(-6) #mutation rate
-    lam=5 # HSC divisions per year (symmetric and asymmetric)
-    last_id=1
-    mean_depth=3000 #sequencing depth
-
-# Fitness Landscape
-    sn = 0 ; sb = 0.05 ; sd = 0 ; w = [sn,sb,sd]
-    pn = 1/3 ; pb = 2/3 ; pd = 0 ; θ = [pn,pb,pd]
-=#
-function EvolutionaryDynamics(eq_population_size::Int64,dt::Float64,lifespan::Int)
-
-    # Initialize the population, ab initio we can consider this the HSC compartment size
-    last_id = 1
-    mutation0 = Mutation(last_id,0.0) # Reference fitness founder
-    N_0 = 1 # Ne for the initial condition
-    # Initial clone
-    clone0 = Clone([mutation0],N_0)
-    # Initial Population
-    population = Population([clone0])
-    # t
-    t = 0
-    # Initial growth phase
-    pop_size = PopSize(population)
-    
-    Ndts = Int(floor(lifespan/dt))
-
-    # Remove the while as it is dangerous
-    for i in 1:Ndts
-        if pop_size < eq_population_size
-            B0 = 1.0
-            D0 = 0.0
-            population, last_id = PoissonDynamics(t,dt,B0,D0,population,last_id)
-            pop_size = PopSize(population)
-        else 
-            B0 = 0.2
-            D0 = 0.2
-            population, last_id = PoissonDynamics(t,dt,B0,D0,population,last_id)
-            pop_size = PopSize(population)
-        end
-    end
-
-return population, last_id
-end
-
 function Sequence(population::Population,mean_depth::Float64, last_id::Int)
 
     # Initialize DF
@@ -319,16 +192,118 @@ return CloneDF0
 end  
 
 
+"""
+Population dynamics sampling from a Poission distribution given a time interval
+...
+# Arguments
+- `population::populationulation: plug in populationulation 
+...
+"""
+
+function PoissonDynamics(t,dt,B0,D0,population::Population,last_id)
+          
+          # Time update
+            t = t+dt
+            pop_size = PopSize(population) 
+            new_clones0 = []
+
+            # Main loop
+            for i in 1:length(population.clones)
+                # Divide
+                Divide(population.clones[i],dt,B0,D0)
+                # Avoid negative numbers
+                if population.clones[i].N < 1
+                   population.clones[i].N = 0
+                end
+                # Mutate
+                new_clones,last_id = Mutate(population.clones[i],dt,μ,last_id,w,θ)
+                if isempty(new_clones) 
+                    continue
+                end
+                for i = 1:length(new_clones)
+                    #push !
+                    push!(new_clones0,new_clones[i])
+                end
+            end
+            #Clean-up
+            if isempty(new_clones0)        
+            else
+                for i in 1:length(new_clones0)
+                push!(population.clones,new_clones0[i])
+                end
+            end
+
+            # Clean-up
+            clone_sizes = unwrapper_pop(population,"N")
+            # Remove a lineage if has negative or zero cell numbers
+            deleteat!(population.clones, findall(x->x<1,clone_sizes))
+return population, last_id
+end
+
+
+#=
+Main Simulation for only one patient:
+
+# Popuation Dynamics Parameters
+    eq_population_size = 10^5 #number of stem cells (HSCs)
+    lifespan = 500 #measured in cell divisions (e.g. 100 = 100 cell divisions)
+    dt=0.1 # measured in units of the overall cell division rate
+    μ=3*10^(-6) #mutation rate
+    lam=5 # HSC divisions per year (symmetric and asymmetric)
+    last_id=1
+    mean_depth=3000 #sequencing depth
+
+# Fitness Landscape
+    sn = 0 ; sb = 0.05 ; sd = 0 ; w = [sn,sb,sd]
+    pn = 1/3 ; pb = 2/3 ; pd = 0 ; θ = [pn,pb,pd]
+=#
+function EvolutionaryDynamics(eq_population_size::Int64,dt::Float64,lifespan::Int)
+
+    # Initialize the population, ab initio we can consider this the HSC compartment size
+    last_id = 1
+    mutation0 = Mutation(last_id,0.0) # Reference fitness founder
+    N_0 = eq_population_size # Ne for the initial condition
+    # Initial clone
+    clone0 = Clone([mutation0],N_0)
+    # Initial Population
+    population = Population([clone0])
+    # t
+    t = 0
+    # Initial growth phase
+    pop_size = PopSize(population)
+    
+    Ndts = Int(floor(lifespan/dt))
+
+    # Remove the while as it is dangerous
+    for i in 1:Ndts
+        if pop_size < eq_population_size
+            B0 = 1.0
+            D0 = 0.0
+            population, last_id = PoissonDynamics(t,dt,B0,D0,population,last_id)
+            pop_size = PopSize(population)
+        else 
+            B0 = 0.2
+            D0 = 0.2
+            population, last_id = PoissonDynamics(t,dt,B0,D0,population,last_id)
+            pop_size = PopSize(population)
+        end
+    end
+
+return population, last_id
+end
+
+
+
 using Plots
 
 # Popuation Dynamics Parameters
     eq_population_size = 10^5 #number of stem cells (HSCs)
-    lifespan = 15 #measured in cell divisions (e.g. 100 = 100 cell divisions)
+    lifespan = 500 #measured in cell divisions (e.g. 100 = 100 cell divisions)
     dt=0.1 # measured in units of the overall cell division rate
-    μ=3*10^(-5) #mutation rate
+    μ=3*10^(-6) #mutation rate
     lam=5 # HSC divisions per year (symmetric and asymmetric)
     last_id=1
-    mean_depth=100.0 #sequencing depth
+    mean_depth=3000.0 #sequencing depth
 
 # Fitness Landscape
     sn = 0 ; sb = 0.05 ; sd = 0 ; sk = 10*sb ; w = [sn,sb,sd,sk]
