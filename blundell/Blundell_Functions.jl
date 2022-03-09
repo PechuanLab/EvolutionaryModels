@@ -269,11 +269,15 @@ function EvolutionaryDynamics(eq_population_size::Int64,dt::Float64,lifespan::In
     population = Population([clone0])
     # t
     t = 0
+    mean_depth = 300.0
     # Initial growth phase
     pop_size = PopSize(population)
     
     Ndts = Int(floor(lifespan/dt))
 
+    #Initialize mut_histories 
+    mut_histories = Sequence(population,mean_depth,last_id)
+    mut_histories[!,:T] = [0]
     # Remove the while as it is dangerous
     for i in 1:Ndts
         if pop_size < eq_population_size
@@ -281,15 +285,24 @@ function EvolutionaryDynamics(eq_population_size::Int64,dt::Float64,lifespan::In
             D0 = 0.0
             population, last_id = PoissonDynamics(t,dt,B0,D0,population,last_id)
             pop_size = PopSize(population)
+            # mut_histories 
+            mut_histories0 = Sequence(population,mean_depth,last_id)
+            mut_histories0[!,:T] = i*ones(nrow(mut_histories0))  
+            mut_histories = vcat(mut_histories,mut_histories0)    
         else 
             B0 = 0.2
             D0 = 0.2
             population, last_id = PoissonDynamics(t,dt,B0,D0,population,last_id)
             pop_size = PopSize(population)
+            # mut_histories 
+            mut_histories0 = Sequence(population,mean_depth,last_id)
+            mut_histories0[!,:T] = i*ones(nrow(mut_histories0))  
+            mut_histories = vcat(mut_histories,mut_histories0)  
         end
+
     end
 
-return population, last_id
+return population, last_id, mut_histories
 end
 
 
@@ -297,27 +310,37 @@ end
 using Plots
 
 # Popuation Dynamics Parameters
-    eq_population_size = 10^5 #number of stem cells (HSCs)
-    lifespan = 500 #measured in cell divisions (e.g. 100 = 100 cell divisions)
-    dt=0.1 # measured in units of the overall cell division rate
-    μ=3*10^(-6) #mutation rate
-    lam=5 # HSC divisions per year (symmetric and asymmetric)
-    last_id=1
-    mean_depth=3000.0 #sequencing depth
+eq_population_size = 10^5 #number of stem cells (HSCs)
+lifespan = 100 #measured in cell divisions (e.g. 100 = 100 cell divisions)
+dt=0.1 # measured in units of the overall cell division rate
+μ=3*10^(-6) #mutation rate
+lam=5 # HSC divisions per year (symmetric and asymmetric)
+last_id=1
+mean_depth=3000.0 #sequencing depth
 
 # Fitness Landscape
-    sn = 0 ; sb = 0.05 ; sd = 0 ; sk = 10*sb ; w = [sn,sb,sd,sk]
-    pn = 1/4 ; pb = 2/3 ; pd = 0 ; pk = 1-1/4-2/3 ; θ = [pn,pb,pd,pk]
+sn = 0 ; sb = 0.05 ; sd = 0 ; sk = 10*sb ; w = [sn,sb,sd,sk]
+pn = 1/4 ; pb = 2/3 ; pd = 0 ; pk = 1-1/4-2/3 ; θ = [pn,pb,pd,pk]
 
 
 lifespan/dt
 
-@time population,last_id = EvolutionaryDynamics(eq_population_size,dt,lifespan)
-@time df = Sequence(population,mean_depth,last_id)
+@time population,last_id,mut_histories = EvolutionaryDynamics(eq_population_size,dt,lifespan)
 
-histogram(df[!,:VAF],nbins=100)
+histogram(mut_histories[!,:VAF],nbins=100)
 histogram(df[!,:Fitness])
 histogram(df[!,:measuredVAF][.!(df[!,:measuredVAF] .== 0)], nbins=100) 
 plot(df[2:end,:VAF],df[2:end,:Fitness],seriestype = :scatter)
+plot(mut_histories[!,:T],mut_histories[!,:VAF],seriestype = :scatter)
 
+using StatsPlots, RDatasets
+gr()
+mut_histories1 = filter(:ID => !=(1),mut_histories)
+mut_histories1 = filter(:VAF => !=(0),mut_histories1)
 
+mut_histories1[!,:VAF] = log.(mut_histories1[!,:VAF])
+@df mut_histories1 scatter(
+    :T,
+    :VAF,
+    group = :ID
+)
