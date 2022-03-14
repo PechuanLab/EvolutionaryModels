@@ -311,7 +311,7 @@ using Plots
 
 # Popuation Dynamics Parameters
 eq_population_size = 10^5 #number of stem cells (HSCs)
-lifespan = 100 #measured in cell divisions (e.g. 100 = 100 cell divisions)
+lifespan = 200 #measured in cell divisions (e.g. 100 = 100 cell divisions)
 dt=0.1 # measured in units of the overall cell division rate
 μ=3*10^(-6) #mutation rate
 lam=5 # HSC divisions per year (symmetric and asymmetric)
