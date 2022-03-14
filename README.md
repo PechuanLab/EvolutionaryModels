@@ -6,7 +6,7 @@ This package contains a Julia implementation of useful population dynamics model
 
 ## Example
 
-````````````
+```julia
 using Plots
 
 # Popuation Dynamics Parameters
@@ -45,4 +45,4 @@ mut_histories1[!,:VAF] = log.(mut_histories1[!,:VAF])
     group = :ID
 )
 
-````````
+```
