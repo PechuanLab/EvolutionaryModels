@@ -1,3 +1,5 @@
+export Mutation,Clone,Population,Lineages
+
 abstract type Lineages end
 
 struct Mutation <: Lineages
