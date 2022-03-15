@@ -257,7 +257,7 @@ Main Simulation for only one patient:
     sn = 0 ; sb = 0.05 ; sd = 0 ; w = [sn,sb,sd]
     pn = 1/3 ; pb = 2/3 ; pd = 0 ; θ = [pn,pb,pd]
 =#
-function EvolutionaryDynamics(eq_population_size::Int64,dt::Float64,lifespan::Int,μ,w,θ)
+function EvolutionaryDynamics(eq_population_size::Int64,dt::Float64,lifespan::Int,μ::Float64,w::Array{Float64},θ::Array{Float64})
 
 
     # Initialize the population, ab initio we can consider this the HSC compartment size

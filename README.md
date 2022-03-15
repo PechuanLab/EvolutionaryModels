@@ -9,7 +9,7 @@ This package contains a Julia implementation of useful population dynamics model
 The following example recreates the results presented in Blundell et al. 2020.
 
 ```julia
-using Plots
+using EvolutionaryModels
 
 # Popuation Dynamics Parameters
 eq_population_size = 10^5 #number of stem cells (HSCs)
@@ -28,6 +28,8 @@ pn = 1/4 ; pb = 2/3 ; pd = 0 ; pk = 1-1/4-2/3 ; θ = [pn,pb,pd,pk]
 lifespan/dt
 
 @time population,last_id,mut_histories = EvolutionaryModels.EvolutionaryDynamics(eq_population_size,dt,lifespan,μ,w,θ)
+
+using Plots
 
 histogram(mut_histories[!,:VAF],nbins=100)
 histogram(df[!,:Fitness])
