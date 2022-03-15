@@ -200,7 +200,7 @@ Population dynamics sampling from a Poission distribution given a time interval
 ...
 """
 
-function PoissonDynamics(t,dt,B0,D0,population::Population,last_id)
+function PoissonDynamics(t,dt,B0,D0,population::Population,last_id,μ,w,θ)
           
           # Time update
             t = t+dt
@@ -216,7 +216,7 @@ function PoissonDynamics(t,dt,B0,D0,population::Population,last_id)
                    population.clones[i].N = 0
                 end
                 # Mutate
-                new_clones,last_id = Mutate(population.clones[i],dt,μ,last_id,w,θ)
+                new_clones,last_id = Mutate(population.clones[i],dt,dt,μ,last_id,w,θ)
                 if isempty(new_clones) 
                     continue
                 end
@@ -257,7 +257,8 @@ Main Simulation for only one patient:
     sn = 0 ; sb = 0.05 ; sd = 0 ; w = [sn,sb,sd]
     pn = 1/3 ; pb = 2/3 ; pd = 0 ; θ = [pn,pb,pd]
 =#
-function EvolutionaryDynamics(eq_population_size::Int64,dt::Float64,lifespan::Int)
+function EvolutionaryDynamics(eq_population_size::Int64,dt::Float64,lifespan::Int,μ,w,θ)
+
 
     # Initialize the population, ab initio we can consider this the HSC compartment size
     last_id = 1
@@ -283,7 +284,7 @@ function EvolutionaryDynamics(eq_population_size::Int64,dt::Float64,lifespan::In
         if pop_size < eq_population_size
             B0 = 1.0
             D0 = 0.0
-            population, last_id = PoissonDynamics(t,dt,B0,D0,population,last_id)
+            population, last_id = PoissonDynamics(t,dt,B0,D0,population,last_id,μ,w,θ)
             pop_size = PopSize(population)
             # mut_histories 
             mut_histories0 = Sequence(population,mean_depth,last_id)
@@ -292,7 +293,7 @@ function EvolutionaryDynamics(eq_population_size::Int64,dt::Float64,lifespan::In
         else 
             B0 = 0.2
             D0 = 0.2
-            population, last_id = PoissonDynamics(t,dt,B0,D0,population,last_id)
+            population, last_id = PoissonDynamics(t,dt,B0,D0,population,last_id,μ,w,θ)
             pop_size = PopSize(population)
             # mut_histories 
             mut_histories0 = Sequence(population,mean_depth,last_id)
