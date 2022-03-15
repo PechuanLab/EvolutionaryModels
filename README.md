@@ -11,6 +11,7 @@ The following example recreates the results presented in Blundell et al. 2020.
 ```julia
 using EvolutionaryModels
 
+############## Evolutionary Simulation
 # Popuation Dynamics Parameters
 eq_population_size = 10^5 #number of stem cells (HSCs)
 lifespan = 200 #measured in cell divisions (e.g. 100 = 100 cell divisions)
@@ -25,10 +26,13 @@ sn = 0 ; sb = 0.05 ; sd = 0 ; sk = 10*sb ; w = [sn,sb,sd,sk]
 pn = 1/4 ; pb = 2/3 ; pd = 0 ; pk = 1-1/4-2/3 ; θ = [pn,pb,pd,pk]
 
 
+# How many time epochs ?
 lifespan/dt
 
+# Main function
 @time population,last_id,mut_histories = EvolutionaryModels.EvolutionaryDynamics(eq_population_size,dt,lifespan,μ,w,θ)
 
+############# Plottinng the results
 using Plots
 
 histogram(mut_histories[!,:VAF],nbins=100)

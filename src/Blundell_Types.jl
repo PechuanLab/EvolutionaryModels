@@ -1,4 +1,4 @@
-export Mutation,Clone,Population,Lineages
+export Mutation
 
 abstract type Lineages end
 
