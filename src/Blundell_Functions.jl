@@ -107,7 +107,7 @@ Mutates a clonal lineage generating a new one
     pb = 2/3 #beneficial , pd = 0  #deleterious
 ...
 """
-function Mutate(clone::Clone,dt::Float64,μ::Float64,last_id::Int,w::Array{Float64},θ::Array{Float64})
+function Mutate(clone::Clone,dt::Float64,μ::Float64,last_id::Int64,w::Array{Float64},θ::Array{Float64})
     
     # Get the number of mutations that happen on dt interval
     muta=clone.Mutations
@@ -150,7 +150,7 @@ Models sequencing and other sampling aspects
 - `population::populationulation: plug in populationulation 
 ...
 """
-function Sequence(population::Population,mean_depth::Float64, last_id::Int)
+function Sequence(population::Population,mean_depth::Float64, last_id::Int64)
 
     # Initialize DF
     CloneDF0 = DataFrame()
@@ -200,7 +200,7 @@ Population dynamics sampling from a Poission distribution given a time interval
 ...
 """
 
-function PoissonDynamics(t,dt,B0,D0,population::Population,last_id,μ,w,θ)
+function PoissonDynamics(t,dt,B0,D0,population::Population,last_id::Int64,μ,w,θ)
           
           # Time update
             t = t+dt
