@@ -269,7 +269,7 @@ function EvolutionaryDynamics(eq_population_size::Int64,dt::Float64,lifespan::In
     # Initial Population
     population = Population([clone0])
     # t
-    t = 0
+    t = 0.0
     mean_depth = 300.0
     # Initial growth phase
     pop_size = PopSize(population)
