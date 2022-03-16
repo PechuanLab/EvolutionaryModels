@@ -1,4 +1,6 @@
 export Mutation
+export Clone
+export Population
 
 abstract type Lineages end
 
