@@ -216,7 +216,7 @@ function PoissonDynamics(t::Float64,dt::Float64,B0::Float64,D0::Float64,populati
                    population.clones[i].N = 0
                 end
                 # Mutate
-                new_clones,last_id = Mutate(population.clones[i],dt,dt,μ,last_id,w,θ)
+                new_clones,last_id = Mutate(population.clones[i],dt,μ,last_id,w,θ)
                 if isempty(new_clones) 
                     continue
                 end
