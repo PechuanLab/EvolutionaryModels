@@ -76,14 +76,14 @@ end
 Samples the fitness effect for a new mutation
 ...
 # Arguments
-- `w::Array{Float64}`: Fitness Landscape, 
+- `w::Vector{Float64}`: Fitness Landscape, 
     #neutral benefit, benefidial, deleterious# 
     sn = 0 ; sb = 0.05 ; sd = 0 ; w = [sn,sb,sd]
-- `θ::Array{Float64}`: Probability of sampling a mutation of a type Landscape, #neutral benefit, benefidial, deleterious# 
+- `θ::Vector{Float64}`: Probability of sampling a mutation of a type Landscape, #neutral benefit, benefidial, deleterious# 
     pn = 1/3 ; pb = 2/3 ; pd = 0 ; θ = [pn,pb,pd]
 ...
 """
-function MutationFitness(w::Array{Float64},θ::Array{Float64}) 
+function MutationFitness(w::Vector{Float64},θ::Vector{Float64}) 
 
     # Sample mutation fitnesss
     FitnessLandscape = w
@@ -101,13 +101,13 @@ Mutates a clonal lineage generating a new one
 - `dt::Float64=0.1`: Time interval step.
 - `μ::Float64=0.2`: Mutation rate
 - `last_id::Int`: Global bookeeping of mutation id
-- `w::Array{Float64}`: Fitness Landscape, w = [sn,sb,sd],sn = 0 #neutral benefit
+- `w::Vector{Float64}`: Fitness Landscape, w = [sn,sb,sd],sn = 0 #neutral benefit
     sb = 0.05 #beneficial , sd = 0  #deleterious
-- `θ::Array{Float64}`: Probability of sampling a mutation of a type Landscape, θ = [pn,pb,pd],pn = 1/3 #neutral benefit
+- `θ::Vector{Float64}`: Probability of sampling a mutation of a type Landscape, θ = [pn,pb,pd],pn = 1/3 #neutral benefit
     pb = 2/3 #beneficial , pd = 0  #deleterious
 ...
 """
-function Mutate(clone::Clone,dt::Float64,μ::Float64,last_id::Int64,w::Array{Float64},θ::Array{Float64})
+function Mutate(clone::Clone,dt::Float64,μ::Float64,last_id::Int64,w::Vector{Float64},θ::Vector{Float64})
     
     # Get the number of mutations that happen on dt interval
     muta=clone.Mutations
@@ -200,7 +200,7 @@ Population dynamics sampling from a Poission distribution given a time interval
 ...
 """
 
-function PoissonDynamics(t::Float64,dt::Float64,B0::Float64,D0::Float64,population::Population,last_id::Int64,w::Array{Float64},θ::Array{Float64})
+function PoissonDynamics(t::Float64,dt::Float64,B0::Float64,D0::Float64,population::Population,last_id::Int64,w::Vector{Float64},θ::Vector{Float64})
           
           # Time update
             t = t+dt
@@ -257,7 +257,7 @@ Main Simulation for only one patient:
     sn = 0 ; sb = 0.05 ; sd = 0 ; w = [sn,sb,sd]
     pn = 1/3 ; pb = 2/3 ; pd = 0 ; θ = [pn,pb,pd]
 =#
-function EvolutionaryDynamics(eq_population_size::Int64,dt::Float64,lifespan::Int,μ::Float64,w::Array{Float64},θ::Array{Float64})
+function EvolutionaryDynamics(eq_population_size::Int64,dt::Float64,lifespan::Int,μ::Float64,w::Vector{Float64},θ::Vector{Float64})
 
 
     # Initialize the population, ab initio we can consider this the HSC compartment size
