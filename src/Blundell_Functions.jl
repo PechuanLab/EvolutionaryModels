@@ -200,7 +200,7 @@ Population dynamics sampling from a Poission distribution given a time interval
 ...
 """
 
-function PoissonDynamics(t::Float64,dt::Float64,B0::Float64,D0::Float64,population::Population,last_id::Int64,w::Vector{Float64},θ::Vector{Float64})
+function PoissonDynamics(t::Float64,dt::Float64,B0::Float64,D0::Float64,population::Population,last_id::Int64,μ::Float64,w::Vector{Float64},θ::Vector{Float64})
           
           # Time update
             t = t+dt
