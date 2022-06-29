@@ -1,7 +1,7 @@
 # EvolutionaryModels
 
 <p align="center">
-  <img width="200"  src="https://github.roche.com/pechuanj/EmbolcallRNAseq/blob/master/IMG_7717.PNG">
+  <img width="200"  src="https://github.roche.com/pechuanj/EvolutionaryModels/blob/master/harveys.pdf">
 </p>
 
 
