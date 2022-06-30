@@ -72,7 +72,7 @@ This package contains the companion code for the paper "Comparing exact and appr
 
 ```julia
 # Libraries
-using BID
+using EvolutionaryModels
 using DifferentialEquations
 
 ##################### Birth-Death Process Starting from n_0 = 1
