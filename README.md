@@ -74,6 +74,7 @@ This package contains the companion code for the paper "Comparing exact and appr
 # Libraries
 using EvolutionaryModels
 using DifferentialEquations
+using Plots
 
 ##################### Birth-Death Process Starting from n_0 = 1
 K_b = (5.5)
@@ -85,8 +86,8 @@ t_0 = 0
 prob = DiscreteProblem(birth_death, [N_0], (0.0,t), (K_b,K_d))
 jump_prob = JumpProblem(birth_death, prob, Direct())
 solutions = EvolutionaryModels.SamplesGillespie(jump_prob,SSAStepper(),100)
-trajectories = solutionstoDF(solutions)
-plotCRNGillespie(solutions)
+trajectories = EvolutionaryModels.solutionstoDF(solutions)
+EvolutionaryModels.plotCRNGillespie(solutions,titleEq="Birth-Death")
 
 
 # Let's compare

@@ -4,7 +4,16 @@ using Plots
  Sampling and plotting accessory functions
 =#
 
-function plotCRNGillespie(sol_array, titleEq)
+"""
+Plots solutions of the Gillespie Sample
+...
+# Arguments
+- `sol_array::Array{Any}`: Array of solutions comimng from SamplesGillespie()
+- `titleEq::String`: Title to add to the plots
+...
+"""
+function plotCRNGillespie(sol_array::Array{Any}, titleEq::String)
+    camerongreen = palette(["#1F654C", "#226F54", "#559972", "#6EAE81", "#87C38F", "#BEDAA5"])
     trajectories = plot(
         sol_array[1],
         xlabel = "Time",
@@ -12,6 +21,7 @@ function plotCRNGillespie(sol_array, titleEq)
         thickness_scaling = 1.5,
         legend = false,
         title = titleEq,
+        palette = camerongreen
     )
     # Plots
     for i = 2:length(sol_array)
@@ -21,6 +31,7 @@ function plotCRNGillespie(sol_array, titleEq)
             xlabel = "Time",
             thickness_scaling = 1.5,
             legend = false,
+            palette = camerongreen
         )
     end
 
