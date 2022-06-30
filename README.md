@@ -84,9 +84,9 @@ t_0 = 0
 
 prob = DiscreteProblem(birth_death, [N_0], (0.0,t), (K_b,K_d))
 jump_prob = JumpProblem(birth_death, prob, Direct())
-solutions = BID.SamplesGillespie(jump_prob,SSAStepper(),100)
-trajectories = BID.solutionstoDF(solutions)
-BID.plotCRNGillespie(solutions)
+solutions = EvolutionaryModels.SamplesGillespie(jump_prob,SSAStepper(),100)
+trajectories = solutionstoDF(solutions)
+plotCRNGillespie(solutions)
 
 
 # Let's compare
@@ -112,9 +112,9 @@ t_0 = 0
 
 prob = DiscreteProblem(birth_death, [N_0], (0.0,t), (K_b,K_d))
 jump_prob = JumpProblem(birth_death, prob, Direct())
-solutions = SamplesGillespie(jump_prob,SSAStepper(),100)
-trajectories = solutionstoDF(solutions)
-plotCRNGillespie(solutions)
+solutions = EvolutionaryModels.SamplesGillespie(jump_prob,SSAStepper(),100)
+trajectories = EvolutionaryModels.solutionstoDF(solutions)
+EvolutionaryModels.plotCRNGillespie(solutions)
 
 
 # Let's compare
@@ -140,7 +140,7 @@ t_0 = 0
 
 prob = DiscreteProblem(BID, [N_0], (0.0,t), (K_b,K_d,K_i))
 jump_prob = JumpProblem(BID, prob, Direct())
-solutions = SamplesGillespie(jump_prob,SSAStepper(),100)
+solutions = EvolutionaryModels.SamplesGillespie(jump_prob,SSAStepper(),100)
 trajectories = solutionstoDF(solutions)
 plotCRNGillespie(solutions)
 
@@ -167,7 +167,7 @@ t = 18
 
 prob = DiscreteProblem(pure_immigration, [N_0], (0.0,t), K_i)
 jump_prob = JumpProblem(pure_immigration, prob, Direct())
-solutions = SamplesGillespie(jump_prob,SSAStepper(),100)
+solutions = EvolutionaryModels.SamplesGillespie(jump_prob,SSAStepper(),100)
 trajectories = solutionstoDF(solutions)
 plotCRNGillespie(solutions)
 

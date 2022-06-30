@@ -38,18 +38,23 @@ function SamplesGillespie(jump_prob, solver, nsamples)
     return solutions
 end
 
-
-
-function solutionstoDF(sol_array)
+"""
+Prepares a data frame containing the trajectories for plotting
+...
+# Arguments
+- `sol_array::Array{Any}`: Array of solutions comimng from SamplesGillespie()
+...
+"""
+function solutionstoDF(sol_array::Array{Any})
     df = DataFrame()
-    df[!, :Time] = solutions[1].t
-    df[!, :Time] = solutions[1].u
+    df[!, :Time] = sol_array[1].t
+    df[!, :Time] = sol_array[1].u
     df[!, :Replicate] = fill("R1", size(df, 1))
     # Plots
     for i = 2:length(sol_array)
         df1 = DataFrame()
-        df1[!, :Time] = solutions[1].t
-        df1[!, :Time] = solutions[1].u
+        df1[!, :Time] = sol_array[1].t
+        df1[!, :Time] = sol_array[1].u
         df1[!, :Replicate] = fill("R$i", size(df1, 1))
         df = [df; df1]
     end
