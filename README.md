@@ -87,21 +87,21 @@ prob = DiscreteProblem(birth_death, [N_0], (0.0,t), (K_b,K_d))
 jump_prob = JumpProblem(birth_death, prob, Direct())
 solutions = EvolutionaryModels.SamplesGillespie(jump_prob,SSAStepper(),100)
 trajectories = EvolutionaryModels.solutionstoDF(solutions)
-EvolutionaryModels.plotCRNGillespie(solutions,titleEq="Birth-Death")
+EvolutionaryModels.plotCRNGillespie(solutions,"Birth-Death")
 
 
 # Let's compare
 nmostres = 2000
-FinalMostra = SampleFinal(nmostres,jump_prob,SSAStepper())
+FinalMostra = EvolutionaryModels.SampleFinal(nmostres,jump_prob,SSAStepper(),1)
 Nmin = minimum(FinalMostra[1])
 Nmax = maximum(FinalMostra[1])
 orange = Nmin:1:Nmax
 τ = (K_b-K_d)*(t-t_0)
 σ = (K_b-K_d)/(K_b+K_d)
-DistroUs = P_BD_n01.(σ,τ,orange)
-histogram(FinalMostra[1],normalize = true,bins=100)
+DistroUs = EvolutionaryModels.P_BD_n01.(σ,τ,orange)
+histogram(FinalMostra[1],normalize = true,bins=100, color = "#BEDAA5")
 #plot!(orange,Distro)
-plot!(orange,DistroUs)
+plot!(orange,DistroUs, color = "#1F654C",w=3)
 
 
 ##################### Birth-Death Process Starting from n_0 = 20
