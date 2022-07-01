@@ -6,11 +6,11 @@ Acessory Math Functions
 Pochammer symbol
 ...
 # Arguments
-- `c::Int`: c integer numbers.
+- `c::Float64: 
 - `m::Int`: m integer numbers.
 ...
 """
-function Poch(c::Int, m::Int)
+function Poch(c::Float64, m::Int)
     # Pochammer Symbol
     c_i = 1
     for i = 0:m-1
