@@ -1,7 +1,7 @@
 # EvolutionaryModels
 
 <p align="center">
-  <img width="700"  src="https://github.roche.com/pechuanj/EvolutionaryModels/blob/master/harveys.png.001.png">
+  <img width="700"  src="https://github.com/PechuanLab/EvolutionaryModels/blob/main/harveys.png.001.png">
 </p>
 
 
