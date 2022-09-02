@@ -15,7 +15,7 @@ add https://github.roche.com/pechuanj/EvolutionaryModels
 
 This package contains a Julia implementation of useful population dynamics models. We also plan to implement some inference tools to fit the models data generated in experimental or sampling designs. 
 
-## Example 1
+## Example 1: Simulating an Evolutionary Model
 
 The following example recreates the results presented in Blundell et al. 2020.
 
@@ -66,7 +66,7 @@ mut_histories1[!,:VAF] = log.(mut_histories1[!,:VAF])
 
 ```
 
-## Example 2
+## Example 2: Analytical Solutions to the BID 
 
 This package contains the companion code for the paper "Comparing exact and approximate solutions to a stochastic process model of clone size distribution". Mostly encodes the useful analytical expressions and provides wrappers to compare them with stochastic simulations generated using other Julia packages. Here are the lattice of limiting cases for the Birth-Death-Immigration process.
 
