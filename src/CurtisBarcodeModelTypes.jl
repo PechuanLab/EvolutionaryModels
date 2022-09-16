@@ -46,7 +46,3 @@ mutable struct LineageW2 <: Lineages
     r::Float64
     M::Float64
 end
-# Population type
-mutable struct Population <: Populations
-    llinatges::Array{Lineages}
-end

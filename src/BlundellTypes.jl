@@ -1,8 +1,5 @@
 export Mutation
 export Clone
-export Population
-
-abstract type Lineages end
 
 struct Mutation <: Lineages
     ID::Int
@@ -14,8 +11,5 @@ mutable struct Clone <: Lineages
     N::Int
 end
 
-mutable struct Population <: Lineages
-    clones::Array{Clone}
-end
 
 

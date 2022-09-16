@@ -8,7 +8,7 @@
 ## Installation
 
 ```julia
-add https://github.roche.com/pechuanj/EvolutionaryModels
+add https://github.com/PechuanLab/EvolutionaryModels.git
 ```
 
 ## Overview

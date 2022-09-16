@@ -1,4 +1,5 @@
 module EvolutionaryModels
+include("Types.jl")
 include("BlundellTypes.jl")
 include("BlundellFunctions.jl")
 include("InferenceHelpers.jl")
