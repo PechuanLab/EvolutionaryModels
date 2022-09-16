@@ -13,7 +13,7 @@ add https://github.roche.com/pechuanj/EvolutionaryModels
 
 ## Overview
 
-This package contains a Julia implementation of useful population dynamics models. We also plan to implement some inference tools to fit the models data generated in experimental or sampling designs. 
+This package contains a Julia implementation of useful population dynamics models I have played with. We also plan to implement some inference tools to fit the models data generated in experimental or sampling designs. 
 
 ## Example 1: Simulating an Evolutionary Model
 
