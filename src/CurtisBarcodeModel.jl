@@ -518,10 +518,10 @@ function sim((s_RG0,s_RG1,s_RG2,s_RG3,s_RG4,s_RG5,s_RG6,s_RG7,s_RG8,s_RG9,s_RG10
   return subset_BarcodeMat
 end
 
-function sim((s_RG1,S_Remainder)) 
+function sim((s_RG0,s_RG1,S_Remainder)) 
   # Fix
   # Selective coefficients     
-  s_coef = [0.25,s_RG1,S_Remainder]
+  s_coef = [s_RG0,s_RG1,S_Remainder]
   # Things we will record
   BarCode_mat = zeros(Float64,NPasses,barcodes)
   # Initial Population

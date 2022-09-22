@@ -25,6 +25,16 @@ function cost((s_RG1,S_Remainder))
     d = (sum(colwise(Euclidean(), x, y)))^(1/2)
     d
 end
+
+function cost((s_RG0,s_RG1,S_Remainder))
+    x = sim((s_RG0,s_RG1,S_Remainder))
+    y = tdata
+    x = Matrix(select!(x, Not(:TimePoint)))
+    d = (sum(colwise(Euclidean(), x, y)))^(1/2)
+    d
+end
+
+
 # Cost Function
 function cost((s_RG0,s_RG1,S_Remainder,r_0,r_1,r_2,K_1,K_2,K_3))
     x = sim((s_RG0,s_RG1,S_Remainder,r_0,r_1,r_2,K_1,K_2,K_3))

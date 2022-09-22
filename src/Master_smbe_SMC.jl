@@ -9,7 +9,7 @@ include("./Master_smbe_Types.jl") # Types
 include("./Master_smbe_Functions.jl")
 
 ######### Prepare data to be fitted
-data = CSV.read(ARGS[1],DataFrame;drop=[1])
+data = CSV.read("../data/",DataFrame;drop=[1])
 Tdata = TargetData(data)
 # Comment for full data
 #data=data[[x in ["T0","T1","T2","T3"] for x in data.TimePoint],:]
