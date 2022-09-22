@@ -47,9 +47,9 @@ lifespan/dt
 using Plots
 
 histogram(mut_histories[!,:VAF],nbins=100)
-histogram(df[!,:Fitness])
-histogram(df[!,:measuredVAF][.!(df[!,:measuredVAF] .== 0)], nbins=100) 
-plot(df[2:end,:VAF],df[2:end,:Fitness],seriestype = :scatter)
+histogram(mut_histories[!,:Fitness])
+histogram(mut_histories[!,:measuredVAF][.!(mut_histories[!,:measuredVAF] .== 0)], nbins=100) 
+plot(mut_histories[2:end,:VAF],mut_histories[2:end,:Fitness],seriestype = :scatter)
 plot(mut_histories[!,:T],mut_histories[!,:VAF],seriestype = :scatter)
 
 using StatsPlots, RDatasets
