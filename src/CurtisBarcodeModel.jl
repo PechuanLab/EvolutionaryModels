@@ -49,9 +49,9 @@ function TargetData(data::DataFrame)
 end
 
 function unwrapper(poblacio::Population, fieldname)
-    x = fill(0.0,length(poblacio.llinatges))
-    for i=1:length(poblacio.llinatges)
-        x[i]=getfield(poblacio.llinatges[i],Symbol(fieldname)) 
+    x = fill(0.0,length(poblacio.clones))
+    for i=1:length(poblacio.clones)
+        x[i]=getfield(poblacio.clones[i],Symbol(fieldname)) 
     end
     return x
 end
@@ -153,7 +153,7 @@ function CulturePasss(poblacio::Population,TimeCulture)
 		N_vec = unwrapper(poblacio,"N")
 		mass_action = N_vec.*exp.(TimeCulture*fitness_vec)
 		sdev_action = ((N_vec.*exp.(2*TimeCulture*fitness_vec)).*(ones(length(fitness_vec))-exp.(-TimeCulture*fitness_vec))).^(1/2)
-		for i in 1:length(poblacio.llinatges)
+		for i in 1:length(poblacio.clones)
 			mu = mass_action[i]
 			sigma = sdev_action[i]
 			d = Normal(mu,sigma)
@@ -161,7 +161,7 @@ function CulturePasss(poblacio::Population,TimeCulture)
 			if x[1] < 0
 				x[1] = 0
 			end
-	    	poblacio.llinatges[i].N = x[1]
+	    	poblacio.clones[i].N = x[1]
 		end
 	end
 	return poblacio
@@ -178,17 +178,17 @@ function CulturePasss(poblacio::Population,TimeCulture,NPass)
 		N_vec = unwrapper(poblacio,"N")
 		PassMut_vec = unwrapper(poblacio,"PassMut")
 		# Mutate
-		for i in 1:length(poblacio.llinatges)
+		for i in 1:length(poblacio.clones)
 			# Initiate the mutation 
 			if PassMut_vec[i] == NPass
 			   # For the Yule process we are fine
-			   poblacio.llinatges[i].NMut = 1
+			   poblacio.clones[i].NMut = 1
 			end
 		end
 		# For clonal
 		mass_action = N_vec.*exp.(TimeCulture*fitness_vec)
 		sdev_action = ((N_vec.*exp.(2*TimeCulture*fitness_vec)).*(ones(length(fitness_vec))-exp.(-TimeCulture*fitness_vec))).^(1/2)
-		for i in 1:length(poblacio.llinatges)
+		for i in 1:length(poblacio.clones)
 			mu = mass_action[i]
 			sigma = sdev_action[i]
 			d = Normal(mu,sigma)
@@ -196,7 +196,7 @@ function CulturePasss(poblacio::Population,TimeCulture,NPass)
 			if x[1] < 0
 				x[1] = 0
 			end
-	    	poblacio.llinatges[i].N = x[1]
+	    	poblacio.clones[i].N = x[1]
 		end
 		# For sub-clonal
 		# Get mutants
@@ -205,7 +205,7 @@ function CulturePasss(poblacio::Population,TimeCulture,NPass)
         # Yule
 		mass_action_mut = NMut_vec.*exp.(TimeCulture*fitnessMut_vec)
 		sdev_action_mut = ((NMut_vec.*exp.(2*TimeCulture*fitnessMut_vec)).*(ones(length(fitnessMut_vec))-exp.(-TimeCulture*fitnessMut_vec))).^(1/2)
-		for i in 1:length(poblacio.llinatges)
+		for i in 1:length(poblacio.clones)
 			mu = mass_action_mut[i]
 			sigma = sdev_action_mut[i]
 			d = Normal(mu,sigma)
@@ -213,7 +213,7 @@ function CulturePasss(poblacio::Population,TimeCulture,NPass)
 			if x[1] < 0
 				x[1] = 0
 			end
-	    	poblacio.llinatges[i].NMut = x[1]
+	    	poblacio.clones[i].NMut = x[1]
 		end
 
 	end
@@ -237,7 +237,7 @@ function CulturePasss(poblacio::Population,TimeCulture,T1,T2,mutated)
 		# For clonal
 		mass_action = N_vec.*exp.(TimeCulture*fitness_vec)
 		sdev_action = ((N_vec.*exp.(2*TimeCulture*fitness_vec)).*(ones(length(fitness_vec))-exp.(-TimeCulture*fitness_vec))).^(1/2)
-		for i in 1:length(poblacio.llinatges)
+		for i in 1:length(poblacio.clones)
 			mu = mass_action[i]
 			sigma = sdev_action[i]
 			d = Normal(mu,sigma)
@@ -245,13 +245,13 @@ function CulturePasss(poblacio::Population,TimeCulture,T1,T2,mutated)
 			if x[1] < 0
 				x[1] = 0
 			end
-	    	poblacio.llinatges[i].N = x[1]
+	    	poblacio.clones[i].N = x[1]
 		end
 		# For sub-clonal
         # Yule
 		mass_action_mut = NMut_vec.*exp.(TimeCulture*fitnessMut_vec)
 		sdev_action_mut = ((NMut_vec.*exp.(2*TimeCulture*fitnessMut_vec)).*(ones(length(fitnessMut_vec))-exp.(-TimeCulture*fitnessMut_vec))).^(1/2)
-		for i in 1:length(poblacio.llinatges)
+		for i in 1:length(poblacio.clones)
 			mu = mass_action_mut[i]
 			sigma = sdev_action_mut[i]
 			d = Normal(mu,sigma)
@@ -259,10 +259,10 @@ function CulturePasss(poblacio::Population,TimeCulture,T1,T2,mutated)
 			if x[1] < 0
 				x[1] = 0
 			end
-	    	poblacio.llinatges[i].NMut = x[1]
+	    	poblacio.clones[i].NMut = x[1]
 		end
 		# Mutate
-		for i in 1:length(poblacio.llinatges)
+		for i in 1:length(poblacio.clones)
 			# Initiate the mutation 
 			if (PassMut_vec[i] >= T1 && mutated[i] == false && Mutates_vec[i] == true && PassMut_vec[i] <= T2)
 			   # For the Yule process we are fine
@@ -274,7 +274,7 @@ function CulturePasss(poblacio::Population,TimeCulture,T1,T2,mutated)
 					if x[1] < 0
 						x[1] = 0
 					end
-		       poblacio.llinatges[i].NMut = x[1]+1
+		       poblacio.clones[i].NMut = x[1]+1
 		       mutated[i] = true
 			end
 		end
@@ -295,7 +295,7 @@ function CulturePasss(poblacio::Population,TimeCulture,T1)
 		fitness_vec = AverageFitSIG.(T1,w_vec,k_vec,r_vec) 
 		mass_action = N_vec.*exp.(TimeCulture*fitness_vec)
 		sdev_action = ((N_vec.*exp.(2*TimeCulture*fitness_vec)).*(ones(length(fitness_vec))-exp.(-TimeCulture*fitness_vec))).^(1/2)
-		for i in 1:length(poblacio.llinatges)
+		for i in 1:length(poblacio.clones)
 			mu = mass_action[i]
 			sigma = sdev_action[i]
 			d = Normal(mu,sigma)
@@ -303,7 +303,7 @@ function CulturePasss(poblacio::Population,TimeCulture,T1)
 			if x[1] < 0
 				x[1] = 0
 			end
-	    	poblacio.llinatges[i].N = x[1]
+	    	poblacio.clones[i].N = x[1]
 		end
 	end
 	return poblacio
@@ -323,7 +323,7 @@ function CulturePasss(poblacio::Population,TimeCulture,T1)
 		fitness_vec = AverageFitSIG.(T1,w_vec,k_vec,r_vec,M_vec) 
 		mass_action = N_vec.*exp.(TimeCulture*fitness_vec)
 		sdev_action = ((N_vec.*exp.(2*TimeCulture*fitness_vec)).*(ones(length(fitness_vec))-exp.(-TimeCulture*fitness_vec))).^(1/2)
-		for i in 1:length(poblacio.llinatges)
+		for i in 1:length(poblacio.clones)
 			mu = mass_action[i]
 			sigma = sdev_action[i]
 			d = Normal(mu,sigma)
@@ -331,7 +331,7 @@ function CulturePasss(poblacio::Population,TimeCulture,T1)
 			if x[1] < 0
 				x[1] = 0
 			end
-	    	poblacio.llinatges[i].N = x[1]
+	    	poblacio.clones[i].N = x[1]
 		end
 	end
 	return poblacio
@@ -351,9 +351,9 @@ function Transfer(poblacio::Population,Ntransfer::Int)
 	R = rand(d,Ntransfer)
 	NewPopN = counts(R,2*barcodes)
 	# Exact
-	for i in 1:length(poblacio.llinatges)
-	    poblacio.llinatges[i].N  = NewPopN[i]
-	    poblacio.llinatges[i].NMut  = NewPopN[i+barcodes] 
+	for i in 1:length(poblacio.clones)
+	    poblacio.clones[i].N  = NewPopN[i]
+	    poblacio.clones[i].NMut  = NewPopN[i+barcodes] 
 	end
 	return poblacio
 end
@@ -366,8 +366,8 @@ function Transfer(poblacio::Population,Ntransfer::Int)
 	d=Categorical(Linage_freq)
 	R = rand(d,Ntransfer)
 	NewPopN = counts(R,barcodes)
-	for i in 1:length(poblacio.llinatges)
-	    poblacio.llinatges[i].N  = NewPopN[i] 
+	for i in 1:length(poblacio.clones)
+	    poblacio.clones[i].N  = NewPopN[i] 
 	end
 	return poblacio
 end
