@@ -358,7 +358,7 @@ function TransferMut(poblacio::Population,Ntransfer::Int)
 	return poblacio
 end
 
-function Transfer(poblacio::Population,Ntransfer::Int)
+function Transfer(poblacio::Population,Ntransfer::Int,barcodes::Int)
 	#function body
 	N_vec = unwrapper(poblacio,"N")
 	total=sum(N_vec)
@@ -401,7 +401,7 @@ function SimPop(barcodes::Int,s_coef::Array{Float64,1},
 	    poblacio = CulturePasss(poblacio::Population,TimeCulture)
 	    N_vec = unwrapper(poblacio,"N")
 	    BarCode_mat[i,:] = N_vec
-	    poblacio = Transfer(poblacio::Population,Ntransfer::Int)
+	    poblacio = Transfer(poblacio::Population,Ntransfer::Int,barcodes::Int)
 	end
 	return BarCode_mat
 end
@@ -512,7 +512,7 @@ function sim((s_RG0,s_RG1,s_RG2,s_RG3,s_RG4,s_RG5,s_RG6,s_RG7,s_RG8,s_RG9,s_RG10
       poblacio = CulturePasss(poblacio::Population,TimeCulture)
       N_vec = unwrapper(poblacio,"N")
       BarCode_mat[i,:] = N_vec
-      poblacio = Transfer(poblacio::Population,Ntransfer::Int)
+      poblacio = Transfer(poblacio::Population,Ntransfer::Int,barcodes::Int)
   end
   subset_BarcodeMat = measurement_Sample(BarCode_mat,TimePoint,Passes,data)
   return subset_BarcodeMat
@@ -533,7 +533,7 @@ function sim((s_RG0,s_RG1,S_Remainder))
       poblacio = CulturePasss(poblacio::Population,TimeCulture)
       N_vec = unwrapper(poblacio,"N")
       BarCode_mat[i,:] = N_vec
-      poblacio = Transfer(poblacio::Population,Ntransfer::Int)
+      poblacio = Transfer(poblacio::Population,Ntransfer::Int,barcodes::Int)
   end
   subset_BarcodeMat = measurement_Sample(BarCode_mat,TimePoint,Passes,data)
   return subset_BarcodeMat
