@@ -340,7 +340,7 @@ end
 
 
 ####################################################################### Subculturing Function
-function Transfer(poblacio::Population,Ntransfer::Int)
+function TransferMut(poblacio::Population,Ntransfer::Int)
 	# Multinomial sampling
 	N_vec = unwrapper(poblacio,"N")
 	NMut_vec = unwrapper(poblacio,"NMut")
