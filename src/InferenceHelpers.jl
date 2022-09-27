@@ -26,8 +26,8 @@ function cost((s_RG1,S_Remainder))
     d
 end
 
-function cost((s_RG0,s_RG1,S_Remainder))
-    x = sim((s_RG0,s_RG1,S_Remainder))
+function costtest((s_RG0,s_RG1,S_Remainder))
+    x = simtest((s_RG0,s_RG1,S_Remainder))
     y = tdata
     x = Matrix(select!(x, Not(:TimePoint)))
     d = (sum(colwise(Euclidean(), x, y)))^(1/2)

@@ -389,6 +389,7 @@ Ntransferes = Int.(100000*ones(10))
 K = [0.2,0.4,0.1]
 r = [0.04,0.05,0.06]
 =#
+
 ## Basic function
 function SimPop(barcodes::Int,s_coef::Array{Float64,1},
 	n0::Array{Int64,1},TimeCulture,NPasses::Int)
@@ -518,7 +519,7 @@ function sim((s_RG0,s_RG1,s_RG2,s_RG3,s_RG4,s_RG5,s_RG6,s_RG7,s_RG8,s_RG9,s_RG10
   return subset_BarcodeMat
 end
 
-function sim((s_RG0,s_RG1,S_Remainder)) 
+function simtest((s_RG0,s_RG1,S_Remainder)) 
   # Fix
   # Selective coefficients     
   s_coef = [s_RG0,s_RG1,S_Remainder]
