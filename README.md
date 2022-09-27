@@ -74,7 +74,47 @@ Once an evolutionaray model is defined, we can make use of other Julia packages 
 
 ```julia
 # Libraries
-using EvolutionaryModels
+using EvolutionaryModels 
+using KissABC
+using Distributions
+using ClusterManagers
+using DataFrames
+using Setfield
+using StatsBase
+using CSV
+using Distances
+using Plots
+
+######### Prepare data to be fitted
+data = CSV.read("../data/Top2_Population_Counts.csv",DataFrame;drop=[1])
+Tdata = EvolutionaryModels.TargetData(data)
+# Timepoints sampled
+TimePoint = Tdata[1]
+# Target data to fit
+tdata = Tdata[2]
+# Number of barcodes
+barcodes = Tdata[3]
+# Initial condition of each barcoded Lineage
+n0 = Tdata[4]
+
+######### TimeSeries Parameters
+parameters = CSV.read("../data/Complete_MasterSizes.csv",DataFrame;drop=[1])
+Parametres = EvolutionaryModels.Params(parameters)
+# Times between culutres
+TimeCultures = Parametres[1]
+# Cells transferred
+Ntransferes = Parametres[2]
+Passes = Parametres[3]
+# Global Parameters
+NPasses = Parametres[4]
+
+# Define the prior
+prior=Factored(Uniform(0,1),# s_RG0
+              Uniform(0,1),  #s_RG1
+              Uniform(0,1))  #S_Remainder
+
+# Perform the inference
+@time ressmc = smc(prior,EvolutionaryModels.costtest, nparticles=20, epstol=10,verbose=true,parallel=true)
 
 ```
 
