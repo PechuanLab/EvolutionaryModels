@@ -26,8 +26,8 @@ function cost((s_RG1,S_Remainder))
     d
 end
 
-function costtest((s_RG0,s_RG1,S_Remainder))
-    x = simtest((s_RG0,s_RG1,S_Remainder),NPasses,barcodes,TimeCultures,Ntransferes,n0,TimePoint)
+function costtest((s_RG0,s_RG1,S_Remainder),NPasses,barcodes,TimeCultures,Ntransferes,n0,TimePoint,Passes,data)
+    x = simtest((s_RG0,s_RG1,S_Remainder),NPasses,barcodes,TimeCultures,Ntransferes,n0,TimePoint,Passes,data)
     y = tdata
     x = Matrix(select!(x, Not(:TimePoint)))
     d = (sum(colwise(Euclidean(), x, y)))^(1/2)
