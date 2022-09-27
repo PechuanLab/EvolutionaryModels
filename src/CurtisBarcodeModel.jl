@@ -519,7 +519,7 @@ function sim((s_RG0,s_RG1,s_RG2,s_RG3,s_RG4,s_RG5,s_RG6,s_RG7,s_RG8,s_RG9,s_RG10
   return subset_BarcodeMat
 end
 
-function simtest((s_RG0,s_RG1,S_Remainder),NPasses,barcodes,TimeCultures,Ntransferes) 
+function simtest((s_RG0,s_RG1,S_Remainder),NPasses,barcodes,TimeCultures,Ntransferes,n0) 
   # Fix
   # Selective coefficients     
   s_coef = [s_RG0,s_RG1,S_Remainder]
