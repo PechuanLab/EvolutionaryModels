@@ -48,6 +48,17 @@ function TargetData(data::DataFrame)
 	return TimePoint,tdata,barcodes,n0
 end
 
+
+"""
+Extracts and array of fields from a Population
+
+# Examples
+
+...
+# Arguments
+...
+
+"""
 function unwrapper(poblacio::Population, fieldname)
     x = fill(0.0,length(poblacio.clones))
     for i=1:length(poblacio.clones)
@@ -377,10 +388,10 @@ end
 ############################## Main Function ##################
 
 #=
-barcodes = 3
-s_coef = [0.3,0.25,0.2]
-n0 = [10000.0,10000.0,10000.0]
-TimeCulture = 16
+barcodes = 1
+s_coef = [0.3]
+n0 = [10000.0]
+TimeCulture = 16.0
 NPasses = 10
 passmut = [0,4,0]
 fitnessMut = [0,0.5,0]
@@ -390,9 +401,28 @@ K = [0.2,0.4,0.1]
 r = [0.04,0.05,0.06]
 =#
 
-## Basic function
+"""
+Simulates Simple Asexual Population
+
+# Examples
+
+```julia-repl
+julia> SimPop(1,0.3,10000.0,16.0,10)
+1
+```
+
+...
+# Arguments
+- `barcodes::Int`: Number of barcoded clones.
+- `s_coef::Array{Float64,1}`: Growth rates for each clone.
+- `n0::Array{Int64,1}`: Initial population for each clone.
+- `TimeCulture::Float64`: Time of culture for each pass.
+- `NPasses::Int`: Number of culture passes.
+...
+
+"""
 function SimPop(barcodes::Int,s_coef::Array{Float64,1},
-	n0::Array{Int64,1},TimeCulture,NPasses::Int)
+	n0::Array{Float64,1},TimeCulture::Float64,NPasses::Int)
 	# Things we will record
 	BarCode_mat = zeros(Float64,NPasses,barcodes)
 	# Initial Population
