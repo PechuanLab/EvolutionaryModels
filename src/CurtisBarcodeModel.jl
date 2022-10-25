@@ -9,9 +9,9 @@ using CSV
 using Distances
 using Plots
 
-########################m
+########################
 #= 
-Ancillary Functions  s
+Ancillary Functions  
 =#
 
 function SaveParams(ressmc,param_names)
@@ -92,7 +92,6 @@ end
 
 
 ######################################################### Initialize Population
-
 function InitPop(barcodes::Int,s_coef::Array{Float64,1},n0::Array{Float64,1},passmut,fitnessMut,nmut)
 	#initializes population
     lin1 = LineageMutPass(1,s_coef[1],n0[1],passmut[1],fitnessMut[1],nmut[1])
