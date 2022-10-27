@@ -41,8 +41,9 @@ end
 
 ################### Lineage Dynamics
 
-function StochGrowth()
+function StochGrowth(CRN,ReactionParams::Tuple,)
 	# CRNT full
+
 return Lineage
 
 
