@@ -2,12 +2,15 @@
 External Libraries 
 =#
 using Catalyst
+using DifferentialEquations
+using Distributions
+using FiniteStateProjection
 
 #= 
 Population Dynamics Functions:
 =#
 
-################### Population Initialization
+#################################################### Population Initialization #####################################################
 
 """
 Initializes an Asexual Population with N Barcoded Lineages
@@ -15,8 +18,7 @@ Initializes an Asexual Population with N Barcoded Lineages
 # Examples
 
 ```julia-repl
-julia> InitBarcodedPop(PureBirth,(1,0.5,100),2)
-Population(Lineages[PureBirth(1, 0.5, 100.0), PureBirth(1, 0.5, 100.0)])
+julia> InitBarcodedPop(AsexualClone,(1,PureBirthParam([0.5]),100),2)
 ```
 
 ...
@@ -39,36 +41,133 @@ function InitBarcodedPop(LinType::DataType,TypeParams::Tuple,Barcodes::Int)
 return population
 end
 
-################### Lineage Dynamics
+#################################################### Lineage Dynamics ###############################################################
 
-function StochGrowth(CRN,ReactionParams::Tuple,)
-	# CRNT full
+"""
+Progates a clonal lineage according to a compatible single type stochastic 
+model
 
-return Lineage
+# Examples
 
+```julia-repl
+julia> CloneStochGrowth(pure_birth,(0.0,10),AsexualClone(1,PureBirthParam([0.5]),100))
 
+```
 
+...
+# Arguments
+- `CRN`: A Chemical Reaction Network
+- `interval::Tuple`: Time interval of growth
+- `clone::Lineages`: Clonal lineage to act on 
+...
 
-
-function CulturePasss(poblacio::Population,TimeCulture)
-	if TimeCulture == 0
-	    poblacio = poblacio
-	else
-		# Exponential assumption
-		fitness_vec = unwrapper(poblacio,"fitness")
-		N_vec = unwrapper(poblacio,"N")
-		mass_action = N_vec.*exp.(TimeCulture*fitness_vec)
-		sdev_action = ((N_vec.*exp.(2*TimeCulture*fitness_vec)).*(ones(length(fitness_vec))-exp.(-TimeCulture*fitness_vec))).^(1/2)
-		for i in 1:length(poblacio.clones)
-			mu = mass_action[i]
-			sigma = sdev_action[i]
-			d = Normal(mu,sigma)
-			x = rand(d, 1)
-			if x[1] < 0
-				x[1] = 0
-			end
-	    	poblacio.clones[i].N = x[1]
-		end
-	end
-	return poblacio
+"""
+function CloneStochGrowth(CRN,interval::Tuple,clone::Lineages)
+	# Parameters
+	N_0 = [clone.N]
+	ReactionParams = clone.Parameters.ParameterValues
+	# Gillespie Samples according to the reaction network
+	prob = DiscreteProblem(CRN, N_0,interval, ReactionParams)
+	jump_prob = JumpProblem(pure_birth, prob, Direct())
+	solution = solve(jump_prob,SSAStepper())
+	clone.N = solution.u[end][1]
+return clone
 end
+
+
+"""
+Progates a clonal lineage according to a compatible single type stochastic 
+model with the Langevin Chemical Equation
+
+# Examples
+
+```julia-repl
+julia> CloneStochGrowth(pure_birth,(0.0,10),AsexualClone(1,PureBirthParam([0.5]),100))
+
+```
+
+...
+# Arguments
+- `CRN`: A Chemical Reaction Network
+- `interval::Tuple`: Time interval of growth
+- `clone::Lineages`: Clonal lineage to act on 
+...
+
+"""
+function CloneLangevinGrowth(CRN,interval::Tuple,clone::Lineages)
+	# Parameters
+	N_0 = [clone.N]
+	ReactionParams = clone.Parameters.ParameterValues
+	# Gillespie Samples according to the reaction network
+	sprob = SDEProblem(CRN, N_0,interval, ReactionParams)
+	ssol  = solve(sprob, EM(), dt=.01)
+	clone.N = solution.u[end][1]
+return clone
+end
+
+"""
+Progates a clonal lineage according to a compatible single type stochastic 
+model in the ode limit
+
+# Examples
+
+```julia-repl
+julia> CloneODEGrowth(pure_birth,(0.0,10),AsexualClone(1,PureBirthParam([0.5]),100))
+
+```
+
+...
+# Arguments
+- `CRN`: A Chemical Reaction Network
+- `interval::Tuple`: Time interval of growth
+- `clone::Lineages`: Clonal lineage to act on 
+...
+
+"""
+function CloneODEGrowth(CRN,interval::Tuple,clone::Lineages)
+	# Parameters
+	N_0 = [clone.N]
+	ReactionParams = clone.Parameters.ParameterValues
+	# Gillespie Samples according to the reaction network
+	oprob = ODEProblem(CRN, N_0, interval,ReactionParams)
+	osol  = solve(oprob, Tsit5())
+	clone.N = osol.u[end][1]
+return clone
+end
+
+
+function CloneYuleGrowth(clone::Lineages,t::Float64)
+	# Parameters
+	r = clone.N
+	ReactionParams = clone.Parameters.ParameterValues
+	p = exp(-ReactionParams[1] * t)
+	# Sample from the negative binomial
+	d = NegativeBinomial(r,p)
+	clone.N = rand(d,1)[1]
+return clone
+end
+
+function CloneYuleGrowthNormal(clone::Lineages,t::Float64)
+	# Parameters
+	ReactionParams = clone.Parameters.ParameterValues
+	p = exp(-ReactionParams[1] * t)
+	μ = clone.N*(p)^-1
+	σ = (clone.N*(1-p)*p^2)^(1/2)
+	# Sample from the negative binomial
+	d = Normal(μ,σ)
+	clone.N = floor(rand(d,1)[1])
+return clone
+end
+
+d1 = NegativeBinomial(r,p)
+d2 = Normal(μ,σ)
+vec1 = rand(d1,1000)
+vec2 = rand(d1,1000)
+
+using EarthMoversDistance
+
+histogram1 = rand(d1,1000)
+histogram2 = rand(d1,1000)
+earthmovers(histogram1, histogram2, (x, y) -> abs(x - y)) # custom ground distance function
+
+

@@ -5,7 +5,7 @@ using DataFrames
 include("/Users/dve/Documents/Curtis_Lab/organoid_ECB/fitness_inference/BC_fit_types.jl")
 include("/Users/dve/Documents/Curtis_Lab/organoid_ECB/fitness_inference/BC_fit_sim_fns.jl")
 
-parent_dir = "/Users/dve/Documents/Curtis_Lab/organoid_ECB/ECB_input_data/"
+parent_dir = "~/Downloads/ECB_input_data/"
 sample_name = "PC5_R3"
 out_file = string(parent_dir, "output/pure_birth_SMC/", sample_name, ".csv")
 

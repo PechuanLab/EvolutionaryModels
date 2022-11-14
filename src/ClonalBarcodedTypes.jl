@@ -1,6 +1,12 @@
 ############### Type Hierarchy Top Element
 abstract type Lineages end
 abstract type Populations end
+abstract type DynamicsParameters end
+
+############### DynamicsParameters Types
+mutable struct PureBirthParam <: DynamicsParameters
+    ParameterValues::Vector{Float64}
+end
 
 ############### Population Types
 mutable struct Population <: Populations
@@ -11,10 +17,9 @@ end
 # Requires a compatible reset_pop function for each Population type for inference
 
 # Lineages without mutation
-mutable struct PureBirth <: Lineages
+mutable struct AsexualClone <: Lineages
     barcode::Int
-    Kb::Float64
+    Parameters::DynamicsParameters
     N::Float64
 end
-
 

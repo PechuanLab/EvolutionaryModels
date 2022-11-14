@@ -8,6 +8,33 @@ using EvolutionaryModels
 using DifferentialEquations
 using Plots
 
+
+##################### Pure Immigration
+K_i = (2.8)
+N_0 = 0
+t = 18
+
+prob = DiscreteProblem(pure_immigration, [N_0], (0.0,t), K_i)
+jump_prob = JumpProblem(pure_immigration, prob, Direct())
+solutions = EvolutionaryModels.SamplesGillespie(jump_prob,SSAStepper(),100)
+trajectories = solutionstoDF(solutions)
+plotCRNGillespie(solutions)
+
+
+
+# Let's compare
+nmostres = 2000
+FinalMostra = SampleFinal(nmostres,jump_prob,SSAStepper())
+Nmin = minimum(FinalMostra[1])
+Nmax = maximum(FinalMostra[1])
+orange = Nmin:1:Nmax
+Distro = PureImmigration.(K_i,t,orange,N_0)
+DistroUs = P_BID.(orange,N_0,t,0.000000001,0.00001,K_i,0)
+histogram(FinalMostra[1],normalize = true)
+#plot!(orange,Distro)
+plot!(orange,DistroUs)
+
+
 ##################### Birth-Death Process Starting from n_0 = 1
 K_b = (5.5)
 K_d = (4.5)
@@ -91,32 +118,6 @@ DistroUs = P_BID(orange,N_0,t,K_d,K_b,K_i,t_0)
 histogram(FinalMostra[1],normalize = true,bins=20)
 #plot!(orange,Distro)
 plot!(orange,DistroUs[1:length(orange)])
-
-
-##################### Pure Immigration
-K_i = (2.8)
-N_0 = 0
-t = 18
-
-prob = DiscreteProblem(pure_immigration, [N_0], (0.0,t), K_i)
-jump_prob = JumpProblem(pure_immigration, prob, Direct())
-solutions = EvolutionaryModels.SamplesGillespie(jump_prob,SSAStepper(),100)
-trajectories = solutionstoDF(solutions)
-plotCRNGillespie(solutions)
-
-
-
-# Let's compare
-nmostres = 2000
-FinalMostra = SampleFinal(nmostres,jump_prob,SSAStepper())
-Nmin = minimum(FinalMostra[1])
-Nmax = maximum(FinalMostra[1])
-orange = Nmin:1:Nmax
-Distro = PureImmigration.(K_i,t,orange,N_0)
-DistroUs = P_BID.(orange,N_0,t,0.000000001,0.00001,K_i,0)
-histogram(FinalMostra[1],normalize = true)
-#plot!(orange,Distro)
-plot!(orange,DistroUs)
 
 
 ```
