@@ -14,8 +14,6 @@ mutable struct Population <: Populations
 end
 
 ############### Lineage Types
-# Requires a compatible reset_pop function for each Population type for inference
-
 # Lineages without mutation
 mutable struct AsexualClone <: Lineages
     barcode::Int
