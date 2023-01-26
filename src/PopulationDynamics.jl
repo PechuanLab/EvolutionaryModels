@@ -271,7 +271,7 @@ julia> PoissonTransfer(clone,10,1000)
 
 """
 
-function PoissonTransfer(clone::Lineages,Ntransfer::Float64,Ntot::Float64)
+function PoissonTransfer(clone::Lineages,Ntransfer,Ntot)
 	# This works if clones are independent
 	λ = clone.N/Ntot*Ntransfer
 	d = Poisson(λ)
@@ -323,7 +323,7 @@ Simulates Simple Asexual Population being transferred in batch culture.
 
 ```julia-repl
 Barcodes = collect(1:10)
-TypeParamsVector = rand(d,10)
+ c = rand(d,10)
 n0 = 100*collect(1:10)
 LinType = AsexualClone
 NPasses = 10
@@ -351,7 +351,7 @@ function BatchCulture(LinType::DataType,Barcodes,n0,TypeParamsVector,NPasses::In
 		CulturePass.(poblacio.lineage ,TimeCulture[i])
 	    Nvec = unwrapper(poblacio,"N")
 	    BarCodeMat[i,:] = Nvec
-	    TransferFunction.(poblacio.lineage,Ntransfer[i],sum(Nvec)))
+	    TransferFunction.(poblacio.lineage,Ntransfer[i],sum(Nvec))
 	end
 	return BarCodeMat
 end
