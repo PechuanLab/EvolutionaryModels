@@ -323,8 +323,8 @@ Simulates Simple Asexual Population being transferred in batch culture.
 
 ```julia-repl
 Barcodes = collect(1:10)
- c = rand(d,10)
 n0 = 100*collect(1:10)
+TypeParamsVector = rand(Uniform(0.1,0.5),10)
 LinType = AsexualClone
 NPasses = 10
 CulturePass = CloneYuleGrowthNormal
