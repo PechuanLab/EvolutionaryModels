@@ -1,5 +1,5 @@
 module EvolutionaryModels
-include("Types.jl")
+include("ClonalBarcodedTypes.jl")
 include("BlundellTypes.jl")
 include("BlundellFunctions.jl")
 include("InferenceHelpers.jl")
